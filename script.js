@@ -24,8 +24,34 @@ form.addEventListener('submit', async (e) => {
     const startDate = form['start-date'].value;
     const endDate = form['end-date'].value;
 
+    // Strict date validation
+    function isValidDateString(dateStr) {
+        // Check format YYYY-MM-DD
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!regex.test(dateStr)) return false;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        if (year < 1900 || year > 2100) return false;
+        if (month < 1 || month > 12) return false;
+        if (day < 1 || day > 31) return false;
+        // Check if valid date
+        const d = new Date(dateStr);
+        return d.getFullYear() === year && d.getMonth() + 1 === month && d.getDate() === day;
+    }
     if (!username || !startDate || !endDate) {
         results.innerHTML = '<span style="color:red">Please fill in all fields.</span>';
+        loading.style.display = 'none';
+        return;
+    }
+    if (!isValidDateString(startDate) || !isValidDateString(endDate)) {
+        results.innerHTML = '<span style="color:red">Please enter valid dates in YYYY-MM-DD format (year 1900-2100).</span>';
+        loading.style.display = 'none';
+        return;
+    }
+    // Check end date is not in the future
+    const today = new Date();
+    const endDateObj = new Date(endDate);
+    if (endDateObj > today) {
+        results.innerHTML = '<span style="color:red">End date cannot be in the future.</span>';
         loading.style.display = 'none';
         return;
     }
