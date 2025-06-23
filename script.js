@@ -55,6 +55,13 @@ form.addEventListener('submit', async (e) => {
         loading.style.display = 'none';
         return;
     }
+    // Check start date is before or equal to end date
+    const startDateObj = new Date(startDate);
+    if (startDateObj > endDateObj) {
+        results.innerHTML = '<span style="color:red">Start date must be before or equal to end date.</span>';
+        loading.style.display = 'none';
+        return;
+    }
 
     // GitHub API: /users/:username/events (max 300 events, paginated)
     let page = 1;
